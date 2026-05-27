@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import Link from "next/link";
 
@@ -10,10 +10,12 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
 export default function SignupPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const setEmail = useAuthStore((state) => state.setEmail);
-  const [emailInput, setEmailInput] = useState("");
+  const [emailInput, setEmailInput] = useState(searchParams.get('email') || "");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [emailExists, setEmailExists] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -29,7 +31,11 @@ export default function SignupPage() {
       setEmail(res.data.email);
       router.push("/assignments");
     } catch (err: any) {
-      setError(err.response?.data?.error || "Signup failed");
+      const errMsg = err.response?.data?.error || "Signup failed";
+      setError(errMsg);
+      if (errMsg.toLowerCase().includes('already exists')) {
+        setEmailExists(true);
+      }
     } finally {
       setLoading(false);
     }
@@ -47,7 +53,14 @@ export default function SignupPage() {
         <h1 className="text-2xl font-bold text-center text-[#303030] mb-2" style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}>Create an Account</h1>
         <p className="text-center text-[#5E5E5E] text-sm mb-8">Join VedaAI to generate beautiful question papers.</p>
         
-        {error && <div className="bg-red-50 text-red-500 p-3 rounded-xl text-sm mb-6 text-center font-medium">{error}</div>}
+        {error && (
+          <div className="bg-red-50 border border-red-100 text-red-500 p-3 rounded-xl text-sm mb-6 text-center font-medium">
+            {error}
+            {emailExists && (
+              <span> <Link href={`/login?email=${encodeURIComponent(emailInput)}`} className="text-[#FF5623] font-bold underline">Log in instead →</Link></span>
+            )}
+          </div>
+        )}
 
         <form onSubmit={handleSignup} className="space-y-5">
           <div>

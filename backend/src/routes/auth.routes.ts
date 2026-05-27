@@ -38,8 +38,11 @@ router.post('/login', async (req, res) => {
     }
 
     const user = await User.findOne({ email });
-    if (!user || user.password !== password) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+    if (!user) {
+      return res.status(404).json({ error: 'No account found with this email. Please sign up instead.', code: 'USER_NOT_FOUND' });
+    }
+    if (user.password !== password) {
+      return res.status(401).json({ error: 'Incorrect password. Please try again.', code: 'WRONG_PASSWORD' });
     }
 
     res.status(200).json({ message: 'Login successful', email: user.email });

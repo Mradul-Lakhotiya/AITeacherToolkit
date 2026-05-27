@@ -14,6 +14,7 @@ export default function LoginPage() {
   const [emailInput, setEmailInput] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [errorCode, setErrorCode] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -29,6 +30,8 @@ export default function LoginPage() {
       setEmail(res.data.email);
       router.push("/assignments");
     } catch (err: any) {
+      const code = err.response?.data?.code || "";
+      setErrorCode(code);
       setError(err.response?.data?.error || "Login failed");
     } finally {
       setLoading(false);
@@ -47,7 +50,14 @@ export default function LoginPage() {
         <h1 className="text-2xl font-bold text-center text-[#303030] mb-2" style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}>Welcome Back to VedaAI</h1>
         <p className="text-center text-[#5E5E5E] text-sm mb-8">Sign in to manage your assignments.</p>
         
-        {error && <div className="bg-red-50 text-red-500 p-3 rounded-xl text-sm mb-6 text-center font-medium">{error}</div>}
+        {error && (
+          <div className="bg-red-50 border border-red-100 text-red-500 p-3 rounded-xl text-sm mb-6 text-center font-medium">
+            {error}
+            {errorCode === 'USER_NOT_FOUND' && (
+              <span> <Link href={`/signup?email=${encodeURIComponent(emailInput)}`} className="text-[#FF5623] font-bold underline">Sign up here →</Link></span>
+            )}
+          </div>
+        )}
 
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
