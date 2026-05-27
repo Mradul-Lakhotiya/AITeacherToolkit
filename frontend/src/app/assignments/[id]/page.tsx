@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+
 export default function OutputPage() {
   const router = useRouter();
   const params = useParams();
@@ -13,7 +15,7 @@ export default function OutputPage() {
 
   useEffect(() => {
     if (id) {
-      axios.get(`http://localhost:4000/api/assignments/${id}`)
+      axios.get(`${API_URL}/assignments/${id}`)
         .then((res) => {
           setData(res.data);
           setLoading(false);

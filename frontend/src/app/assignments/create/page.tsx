@@ -7,7 +7,10 @@ import { useRouter } from "next/navigation";
 import { useAssignmentStore } from "@/store/assignmentStore";
 import { useAuthStore } from "@/store/authStore";
 
-const socket = io("http://localhost:4000");
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:4000";
+
+const socket = io(SOCKET_URL);
 
 export default function CreateAssignment() {
   const router = useRouter();
@@ -81,7 +84,7 @@ export default function CreateAssignment() {
     formData.append("userId", email || "anonymous");
 
     try {
-      const res = await axios.post("http://localhost:4000/api/assignments", formData, {
+      const res = await axios.post(`${API_URL}/assignments`, formData, {
         headers: { "Content-Type": "multipart/form-data" }
       });
       const id = res.data.assignmentId;

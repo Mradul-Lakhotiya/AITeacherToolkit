@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
@@ -22,7 +24,7 @@ export default function AssignmentsPage() {
 
   const fetchAssignments = async () => {
     try {
-      const res = await axios.get(`http://localhost:4000/api/assignments?email=${email}`);
+      const res = await axios.get(`${API_URL}/assignments?email=${email}`);
       setAssignments(res.data);
       setLoading(false);
     } catch (err) {
@@ -33,7 +35,7 @@ export default function AssignmentsPage() {
 
   const deleteAssignment = async (id: string) => {
     try {
-      await axios.delete(`http://localhost:4000/api/assignments/${id}`);
+      await axios.delete(`${API_URL}/assignments/${id}`);;
       fetchAssignments();
     } catch (err) {
       console.error(err);

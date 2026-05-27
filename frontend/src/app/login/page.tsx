@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import Link from "next/link";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+
 export default function LoginPage() {
   const router = useRouter();
   const setEmail = useAuthStore((state) => state.setEmail);
@@ -20,7 +22,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:4000/api/auth/login", {
+      const res = await axios.post(`${API_URL}/auth/login`, {
         email: emailInput,
         password,
       });
