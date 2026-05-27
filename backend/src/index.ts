@@ -13,7 +13,10 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-app.use(cors());
+app.use(cors({
+  origin: true, // reflect the request origin
+  credentials: true,
+}));
 app.use(express.json());
 
 // Routes
